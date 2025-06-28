@@ -1,0 +1,1 @@
+from .likeManager import LikeManager # Импорт класса из соседнего файла likeManager.py

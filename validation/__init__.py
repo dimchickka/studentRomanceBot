@@ -1,0 +1,1 @@
+from .universityResolver import UniversityResolver  # Импорт класса из соседнего файла universityDataParser.py

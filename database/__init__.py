@@ -1,0 +1,1 @@
+from .database import Database  # Импорт класса из соседнего файла database.py

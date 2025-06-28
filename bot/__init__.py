@@ -1,0 +1,1 @@
+from .bot import TelegramBot  # Импорт класса из соседнего файла bot.py
