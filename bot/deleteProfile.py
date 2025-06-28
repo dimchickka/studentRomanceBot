@@ -19,6 +19,9 @@ class DeleteProfile:
 
     def handleDoYouReallyWantToDeleteYourProfile(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleDoYouReallyWantToDeleteYourProfile)
         options = [
             "Да",
             "В главное меню ⬅️",

@@ -44,7 +44,7 @@ class Registration:
                         "До 10 июля функционал ограничен",
                         reply_markup=createReplyKeyboard(["Смотреть мою анкету", "Заполнить анкету заново"])
                     )
-                    self.bot.register_next_step_handler(message, self.menuUntilStart)
+                    self.bot.register_next_step_handler(message, self.handleMenuUntilStart)
             else:
                 self._handleStart(message)
 
@@ -59,6 +59,9 @@ class Registration:
 
     def handleName(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleName)
         if (message.chat.id not in self.tempData): return self._handleStart(message)
         """Обработка имени"""
 
@@ -91,6 +94,9 @@ class Registration:
     def handleSex(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleSex)
         """Обработка пола"""
         if message.text not in ["Мужской", "Женский"]:
             self.bot.send_message(message.chat.id, "Пожалуйста, выбери пол с помощью кнопок!")
@@ -115,6 +121,9 @@ class Registration:
     def handleAge(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleAge)
         if not message.text or not isinstance(message.text, str):
             self.bot.send_message(message.chat.id, "Пожалуйста, введи корректный возраст (целое число).")
             return self.bot.register_next_step_handler(message, self.handleAge)
@@ -170,6 +179,9 @@ class Registration:
     def handleDescription(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleDescription)
         if not message.text or not isinstance(message.text, str):
             self.bot.send_message(message.chat.id, "Пожалуйста, введите корректное описание")
             return self.bot.register_next_step_handler(message, self.handleDescription)
@@ -216,6 +228,9 @@ class Registration:
     def validationCityAndUniversity(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.validationCityAndUniversity)
         if not message.text or not isinstance(message.text, str):
             self.bot.send_message(
                 message.chat.id,
@@ -254,6 +269,9 @@ class Registration:
     def handleUniversity(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleUniversity)
         """Обработка универа"""
         if message.text not in ["Да", "Нет"]:
             self.bot.send_message(message.chat.id, "Пожалуйста, введите ответ с помощью кнопок!")
@@ -285,6 +303,9 @@ class Registration:
     def confirmEMAILExicting(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.confirmEMAILExicting)
         """Обработка ответа на вопрос: Действительно ли существует почта?"""
         if message.text == self.parent.codeForPassingEmailControl:
             self.bot.send_message(message.chat.id, "Принято, разрешаю тебе не вводить почту!")
@@ -320,6 +341,9 @@ class Registration:
     def validationEmail(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.validationEmail)
         resolver = self.tempData[message.chat.id]['resolver']
         result = resolver.is_university_email(message.text)
 
@@ -337,22 +361,42 @@ class Registration:
     def check_validation_code(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.check_validation_code)
         """Проверка кода подтверждения"""
         result = self.tempData[message.chat.id]['resolver'].check_verification_code(message.text)
         if (result):
             self.askPhoto(message)
         else:
-            self.bot.send_message(
-                message.chat.id,
-                "Код подтверждения неверный\nПопробуем ещё раз?",
-                reply_markup=createReplyKeyboard(["Да, давай", "Ввести заново почту"])
-            )
-            self.bot.register_next_step_handler(message, self.checkAnswerToSendCodeOneMoreTime)
+            if 'quantity_code_email' not in self.tempData[message.chat.id]:
+                self.bot.send_message(
+                    message.chat.id,
+                    "Код подтверждения неверный\nПопробуй ввести ещё раз"
+                )
+                self.tempData[message.chat.id]['quantity_code_email'] = 1
+                self.bot.register_next_step_handler(message, self.check_validation_code)
+            elif (self.tempData[message.chat.id].get('quantity_code_email', 0) > 4):
+                self.bot.send_message(
+                    message.chat.id,
+                    f"Код подтверждения неверный\nТы либо балуешься, либо действительно какие-то проблемы\nЕсли второе, то напиши в поддержку: {cfg.SUPPORT}"
+                )
+            else:
+                self.bot.send_message(
+                    message.chat.id,
+                    "Код подтверждения неверный\nДавай я отправлю код ещё раз",
+                    reply_markup=createReplyKeyboard(["Да, давай", "Ввести заново почту"])
+                )
+                self.tempData[message.chat.id]['quantity_code_email'] += 1
+                self.bot.register_next_step_handler(message, self.checkAnswerToSendCodeOneMoreTime)
 
 
     def checkAnswerToSendCodeOneMoreTime(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.checkAnswerToSendCodeOneMoreTime)
         if (message.text == "Да, давай"):
             self.bot.send_message(message.chat.id, "Код подтверждения отправлен, вводи его сюда! В этот раз не ошибайся)")
             self.bot.register_next_step_handler(message, self.check_validation_code)
@@ -376,6 +420,9 @@ class Registration:
     def handlePhoto(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "photo":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли фото")
+            return self.bot.register_next_step_handler(message, self.handlePhoto)
         """Обработка полученного фото"""
         if message.content_type != 'photo':
             self.bot.send_message(message.chat.id, "Пожалуйста, пришлите фото!")
@@ -429,6 +476,9 @@ class Registration:
     def checkCorrectionData(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
         if (message.chat.id not in self.tempData): return self._handleStart(message)
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.checkCorrectionData)
         if message.text not in ["Да", "Заполнить анкету заново"]:
             self.bot.send_message(message.chat.id, "Я вас не понимаю. Пожалуйста, введите ответ с помощью кнопок!")
             self.bot.register_next_step_handler(message, self.checkCorrectionData)
@@ -467,7 +517,7 @@ class Registration:
                     # Открываем и отправляем фото
                     with open(cfg.RAFFLE_PHOTO_PATH, "rb") as photo:
                         self.bot.send_photo(message.chat.id, photo, caption=raffle_text)
-                    self.bot.register_next_step_handler(message, self.menuUntilStart)
+                    self.bot.register_next_step_handler(message, self.handleMenuUntilStart)
 
         else:
             if (self.db.getUserById(message.chat.id)):
@@ -498,8 +548,11 @@ class Registration:
         else:
             return
 
-    def menuUntilStart(self, message):
+    def handleMenuUntilStart(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleMenuUntilStart)
         if(not self.parent.isOpenBot):
             if (message.text == "Смотреть мою анкету"):
                 self.checkMyProfile(message)
@@ -515,7 +568,7 @@ class Registration:
                     "Бот начнёт функционировать с 10 июля. Пока ты можешь только изменить данные своей анкеты",
                     reply_markup=createReplyKeyboard(["Смотреть мою анкету", "Заполнить анкету заново"])
                 )
-                self.bot.register_next_step_handler(message, self.menuUntilStart)
+                self.bot.register_next_step_handler(message, self.handleMenuUntilStart)
         else:
             self.parent.showMainMenu(message)
 
@@ -540,7 +593,7 @@ class Registration:
             self.parent.showMainMenu(message)
         else:
             self.bot.send_photo(message.chat.id, photo, caption=text, reply_markup=createReplyKeyboard(["Смотреть мою анкету", "Заполнить анкету заново"]))
-            self.bot.register_next_step_handler(message, self.menuUntilStart)
+            self.bot.register_next_step_handler(message, self.handleMenuUntilStart)
 
     def resetUserById(self, user_id):
         if(self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return

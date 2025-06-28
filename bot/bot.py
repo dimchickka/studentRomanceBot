@@ -56,6 +56,9 @@ class TelegramBot:
 
     def handleMainMenu(self, message):
         if (self.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleMainMenu)
         if message.text == "Смотреть анкеты":
             self.profileView.handleViewProfiles(message)
         elif message.text == "Описание к твоей анкете от ИИ":

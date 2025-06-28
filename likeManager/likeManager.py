@@ -75,6 +75,9 @@ class LikeManager:
         # self.bot.register_next_step_handler(user_id, self.handleProfileResponse)
 
     def handleProfileResponse(self, message):
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleProfileResponse)
         user_id = message.chat.id
         action = message.text
         data = self.tempDataWhoLikedWhom.get(user_id, {})
@@ -110,6 +113,9 @@ class LikeManager:
             self.tempDataWhoLikedWhom.pop(message.chat.id, None)
             self.parent.showMainMenu(message)
     def handleContinueViewOnProfilesOfUsersWhoLikedYou(self, message):
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleContinueViewOnProfilesOfUsersWhoLikedYou)
         user_id = message.chat.id
         action = message.text
         if action not in ["Посмотреть", "В главное меню ⬅️"]:

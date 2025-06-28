@@ -149,7 +149,7 @@ def createInlineKeyboard(options, callback_prefix="opt_"):
     return keyboard
 
 def isValidCityName(city: str) -> bool:
-    city = city.strip()
+    city = city
 
     return (
         3 <= len(city) <= 40 and

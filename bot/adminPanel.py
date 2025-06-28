@@ -36,10 +36,15 @@ class AdminCatalog:
 
     def adminActions(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.adminActions)
         text = message.text.strip().lower()
 
         if text == "открыть бота":
-            # Заглушка для действия "Открыть бота"
+            if(self.parent.isOpenBot):
+                self.bot.send_message(cfg.admin, "Бот уже открыт")
+                return self.adminMenu()
             self.bot.send_message(cfg.admin, "Бот открыт")
             self.parent.isOpenBot = True
             self.temp_notification_data = {
@@ -49,7 +54,9 @@ class AdminCatalog:
             self.collectUsers()
 
         elif text == "закрыть бота":
-            # Заглушка для действия "Закрыть бота"
+            if(not self.parent.isOpenBot):
+                self.bot.send_message(cfg.admin, "Бот уже закрыт")
+                return self.adminMenu()
             self.bot.send_message(cfg.admin, "Бот закрыт")
             self.parent.isOpenBot = False
             self.adminMenu()
@@ -89,6 +96,10 @@ class AdminCatalog:
             self.adminMenu()
 
     def handleIdOfUserToResetRegistration(self, message):
+        if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleIdOfUserToResetRegistration)
         if not message.text or not isinstance(message.text, str):
             self.bot.send_message(message.chat.id, "Пожалуйста, введи корректный Id.")
             return self.bot.register_next_step_handler(message, self.handleAge)
@@ -105,12 +116,17 @@ class AdminCatalog:
         self.adminMenu()
 
     def handleNewToken(self, message):
+        if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleNewToken)
         new_token = message.text.strip()
         cfg.update_openrouter_key(new_token)
         self.bot.send_message(message.chat.id, "✅ Новый токен сохранён и будет использоваться.")
         self.adminMenu()
 
     def generateNewCodeForPassingEmailControl(self):
+        if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
         self.bot.send_message(cfg.admin, "Генерация кода...")
 
         chars = string.ascii_letters + string.digits
@@ -118,6 +134,9 @@ class AdminCatalog:
         self.bot.send_message(cfg.admin, self.parent.codeForPassingEmailControl)
     def handleDeleteUser(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleDeleteUser)
         if message.text.isdigit():
             if self.db.deleteUserById(int(message.text)):
                 self.parent.tempDataIsUserInCallBack.pop(message.chat.id, None)
@@ -154,6 +173,9 @@ class AdminCatalog:
 
     def handleNotificationAudience(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleNotificationAudience)
         audience_text = message.text.strip()
 
         # Преобразуем строку в словарь
@@ -185,6 +207,9 @@ class AdminCatalog:
 
     def checkIsAudienceForNotificationCorrect(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(cfg.admin, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.checkIsAudienceForNotificationCorrect)
         options = [
             "Да, всё верно",
             "В главное меню ⬅️",

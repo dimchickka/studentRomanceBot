@@ -20,6 +20,9 @@ class AIDescription:
             self.parent.showMainMenu(message)
     def handleThreeWordsFromUser(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleThreeWordsFromUser)
         if not message.text or len(message.text.strip()) > 50:
             self.bot.send_message(message.chat.id, "Пожалуйста, введи текст не длиннее 50 символов")
             return self.bot.register_next_step_handler(message, self.handleThreeWordsFromUser)
@@ -55,6 +58,9 @@ class AIDescription:
         self.bot.register_next_step_handler(message, lambda msg: self.handleDoYouLikeQuestion(msg, descriptionText))
     def handleDoYouLikeQuestion(self, message, description):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, lambda msg: self.handleDoYouLikeQuestion(msg, description))
         options = [
             "Сделать это моим описанием",
             "В главное меню ⬅️",
@@ -67,7 +73,7 @@ class AIDescription:
                 "Я тебя не понимаю, пожалуйста, выбери вариант с помощью кнопок",
                 reply_markup=markup
             )
-            self.bot.register_next_step_handler(message, self.handleDoYouLikeQuestion)
+            return self.bot.register_next_step_handler(message, lambda msg: self.handleDoYouLikeQuestion(msg, description))
         if (self.parent.profileView.comeBackToTheMainMenu(message)): return
         else:
             if(self.db.update_user_description(message.chat.id, description)):

@@ -26,6 +26,9 @@ class ProfileView:
 
     def handleWhoWillWeFind(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleWhoWillWeFind)
         # Если пол мужской (1), значит искать девушек, иначе парней
         user_sex = self.db.getSexById(message.chat.id)
         target_label = "Девушки" if user_sex == 1 else "Парни"
@@ -90,6 +93,9 @@ class ProfileView:
 
     def handleCitySelection(self, message):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, self.handleCitySelection)
         self.tempDataCity[message.chat.id] = {}  # Создаем новую запись
         city = message.text.strip()
 
@@ -100,7 +106,6 @@ class ProfileView:
             )
             self.bot.register_next_step_handler(message, self.handleCitySelection)
             return
-
         user_sex = self.db.getSexById(message.chat.id)
         users = self.db.getMatchingUsers(
             viewer_id=message.chat.id,
@@ -175,11 +180,14 @@ class ProfileView:
 
     def handleProfileResponse(self, message, tempData, cityName):
         if (self.parent.tempDataIsUserInCallBack.get(message.chat.id, False)): return
+        if message.content_type != "text":
+            self.bot.send_message(message.chat.id, "Пожалуйста, пришли текстовое сообщение")
+            return self.bot.register_next_step_handler(message, lambda msg: self.handleProfileResponse(msg, tempData, cityName))
         user_id = message.chat.id
         action = message.text
         if action not in ["❤️ Лайк", "💔 Дизлайк", "В главное меню ⬅️"]:
             self.bot.send_message(user_id, "Пожалуйста, выбери действие кнопкой 👇")
-            self.bot.register_next_step_handler(message, self.handleProfileResponse)
+            self.bot.register_next_step_handler(message, lambda msg: self.handleProfileResponse(msg, tempData, cityName))
             return
 
         if self.comeBackToTheMainMenu(message): return
