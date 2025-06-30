@@ -76,15 +76,17 @@ class ChatGPTRequests:
     def main_Request(self, prompt):
         for model in self.models_for_io_net:
             response = self.query_to_IO_NET(prompt, model)
+            print(response)
             if response:
                 return response
             else:
-                return cfg.ERROR_REQUEST
+                continue
         for attempt in range(self.max_retries):
             response = self.query_openrouter(prompt)
             if response != cfg.ERROR_REQUEST:
                 return response
             else:
                 time.sleep(2)  # задержка перед следующей попыткой
+
 
         return cfg.ERROR_REQUEST

@@ -106,10 +106,11 @@ class UniversityResolver:
         )
 
         chatGPT = ChatGPTRequests()
-        response = chatGPT.main_Request(prompt).strip().lower()
+        response = chatGPT.main_Request(prompt)
         if (response == cfg.ERROR_REQUEST):
             return cfg.ERROR_REQUEST
         else:
+            response = response.lower()
             # Проверка ответа
             if response in ['да', 'нет']:
                 if response == 'да':
