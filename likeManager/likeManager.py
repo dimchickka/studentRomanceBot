@@ -100,8 +100,14 @@ class LikeManager:
             else:
                 self.db.deleteUserById(liker_id)
                 self.bot.send_message(user_id, "Похоже что этот пользователь уже кого-то нашёл себе😕\n Не расстраивайся, мы тебе тоже кого нибудь найдём 😄")
-        data.pop(0)
-        self.handleOneMoreUserWhoLiked(message)
+            data.pop(0)
+            self.handleOneMoreUserWhoLiked(message)
+        elif(action == "💔 Дизлайк"):
+            data.pop(0)
+            self.handleOneMoreUserWhoLiked(message)
+        else:
+            self.parent.showMainMenu(message)
+
     def handleOneMoreUserWhoLiked(self, message):
         data = self.tempDataWhoLikedWhom.get(message.chat.id, {})
         if(data):
