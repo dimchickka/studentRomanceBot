@@ -88,7 +88,6 @@ class LikeManager:
             self.bot.register_next_step_handler(message, self.handleProfileResponse)
             return
 
-        if self.parent.profileView.comeBackToTheMainMenu(message): return
 
         # Обработка лайка
         if action == "❤️ Лайк":
@@ -106,6 +105,7 @@ class LikeManager:
             data.pop(0)
             self.handleOneMoreUserWhoLiked(message)
         else:
+            self.parent.tempDataIsUserInCallBack[message.chat.id] = False
             self.parent.showMainMenu(message)
 
     def handleOneMoreUserWhoLiked(self, message):
